@@ -6,11 +6,13 @@ import com.google.gson.GsonBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.ByteProcessor;
+import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -61,11 +63,11 @@ public class Network {
 
                                     Message message = new Message();
                                     message.initFromByteBuf((ByteBuf) msg);
-                                    System.out.println(message.typ);
+
                                     if(message.typ== Message.MsgType.FileUpload){
                                         System.out.println("File upload from the server");
-                                        File f = new File("saves/"+message.login+"/"+message.filename);
-                                        if(f.exists()){
+                                        File f = new File("saves/"+message.filename);
+                                        if(!f.exists()){
                                             f.createNewFile();
                                             Files.write(f.toPath(), message.file.getBytes(StandardCharsets.UTF_8));
 
@@ -80,16 +82,10 @@ public class Network {
                                     }
                                     if(message.typ== Message.MsgType.FileList){
                                         files=message.files;
-                                    }
-                                    try {
-                                        while (in.isReadable()) {        // (1)
 
-                                            System.out.flush();
-                                        }
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                        ReferenceCountUtil.release(msg); // (2)
+                                        System.out.println("Files: "+message.files);
                                     }
+
 
 
                                 }
@@ -148,7 +144,7 @@ public class Network {
         if(msg.typ== Message.MsgType.FileUpload) {
             System.out.println("Sended: " + s);
         }
-        ByteBuf buf = c.writeBytes(s.getBytes(StandardCharsets.UTF_8));
+        ByteBuf buf = Unpooled.copiedBuffer(s, CharsetUtil.UTF_8);
 
         byte bute[]= {2};
         String b="";

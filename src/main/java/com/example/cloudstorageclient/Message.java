@@ -38,15 +38,13 @@ public class Message {
 
 
 
-
-        System.out.println(b);
-
         Message m = g.fromJson(c, Message.class);
         file = m.file;
         filename = m.filename;
         login = m.login;
         password = m.password;
         typ = m.typ;
+        files = m.files;
     }
 
     public MsgType getMsgType(){

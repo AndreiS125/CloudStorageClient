@@ -25,8 +25,10 @@ public class HelloController {
 
     @FXML
     void del(ActionEvent event) {
-        String s = fileList.getSelectionModel().getSelectedItem();
+        String s = fileList1.getFocusModel().getFocusedItem();
+        System.out.println("We tryed to del file "+s);
         Message m = new Message();
+        Gson g = new GsonBuilder().create();
         m.typ= Message.MsgType.FileDelete;
         m.login=login;
         m.password=password;
@@ -36,7 +38,7 @@ public class HelloController {
 
     @FXML
     void download(ActionEvent event) {
-        String s = fileList.getSelectionModel().getSelectedItem();
+        String s = fileList.getFocusModel().getFocusedItem();
         Message m = new Message();
         m.typ= Message.MsgType.FileRequest;
         m.login=login;
@@ -73,11 +75,12 @@ public class HelloController {
 
     @FXML
     void upd(ActionEvent event) {
-        String s = fileList1.getSelectionModel().getSelectedItem();
+        String s = fileList1.getFocusModel().getFocusedItem();
+        System.out.println("We tryed to load file "+s);
         Message m = new Message();
         byte[] b = new byte[0];
         try {
-            b = Files.readAllBytes(Paths.get("saves/"+m.filename));
+            b = Files.readAllBytes(Paths.get("saves/"+s));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,7 +88,7 @@ public class HelloController {
         for(byte by:b){
             sе=sе+String.valueOf(by);
         }
-        m.file=s;
+        m.file=new String(b);
         Gson g = new GsonBuilder().create();
         m.typ= Message.MsgType.FileUpdate;
         m.login=login;
